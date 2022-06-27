@@ -1,11 +1,13 @@
-var app = require('express')();
-var http = require('http').createServer(app);
-var io = require('socket.io')(5000);
+var express = require("express");
+var app = express();
+var server = require("http").createServer(app);
+var io = require('socket.io')(server);
+server.listen(process.env.PORT || 3000);
 
-io.attach(http, {
-    pingInterval: 10000,
-    pingTimeout: 5000,
-    cookie: false
+console.log("server started");
+
+app.get("/", function(req, res){
+    res.sendFile(__dirname +"/home.html");
 });
 
 //Whenever someone connects this gets executed
@@ -37,12 +39,4 @@ io.on('connection', function (socket) {
         io.emit("onPercentUpdate", msg);
     });
 
-    // timeout();
 });
-// function timeout() {
-//     setTimeout(function () {
-//         io.emit('direct', "forward");
-//         timeout();
-//     }, 1000);
-// }
-http.listen();
